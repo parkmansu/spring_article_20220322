@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Share</title>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+        .header {
+            height: 300px;
+            background-color: gray;
+        }
+
+        .bgc {
+            width: 1920px;
+            height: 302px;
+            border: solid 1px gray;
+            /*margin-left: 400px;*/
+            background-image: url(banner2.jpg);
+
+        }
+
+        #title {
+            width: 1920px;
+            height: 300px;
+            font-size: 40px;
+            margin-top: 80px;
+            margin-left: 600px;
+            color: yellow;
+            font-weight: bold;
+
+        }
+        #title > span{
+            width: 1920px;
+            height: 300px;
+            font-size: 25px;
+            margin-top: 80px;
+            color: yellow;
+            font-weight: bold;
+
+        }
+        .title:hover {
+            color: blue;
+        }
+        .write {
+            height: 50px;
+            border: solid 1px gray;
+            background-color: gray;
+            background-image: url(banner3.jpg);
+        }
+
+        .write > button {
+            height: 50px;
+            margin-left: 400px;
+            font-weight: bold;
+        }
+
+        .commentAll {
+            margin-top: 15px;
+            margin-left: 450px;
+        }
+
+        .commentAll > p {
+            font-weight: bold;
+        }
+
+        .comment {
+            margin-left: 400px;
+        }
+    </style>
+    <script>
+
+
+        function isValidContents(contents) {
+            if (contents == '') {
+                alert('내용을 입력해주세요');
+                return false;
+            }
+            if (contents.trim().length > 140) {
+                alert('공백 포함 140자 이하로 입력해주세요');
+                return false;
+            }
+            return true;
+        }
+
+        function writePost() {
+            let contents = $('#message-text').val();
+            if (isValidContents(contents) == false) {
+                return;
+            }
+            let username = $('#recipient-name').val();
+
+            let nickname = $("#nickname").val();
+
+            let data = {'username': username, 'contents': contents, 'nickname': nickname};
+            $.ajax({
+                type: "POST",
+                url: "/api/memos",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert('메시지가 성공적으로 작성되었습니다.');
+                    window.location.reload();
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            getMessages();
+        })
+
+        function getMessages() {
+            $('#commentBox').empty();
+            $.ajax({
+                type: 'GET',
+                url: '/api/memos',
+                success: function (response) {
+                    for (let i = 0; i < response.length; i++) {
+                        let memo = response[i];
+                        let id = memo.id;
+                        let username = memo.username;
+                        let contents = memo.contents;
+                        let modifiedAt = memo.modifiedAt;
+                        let nickname = memo.nickname
+                        addHTML(id, username, contents, modifiedAt, nickname);
+                    }
+                }
+            })
+        }
+
+        function addHTML(id, username, contents, modifiedAt, nickname) {
+            let tempHtml = `<div class="comment">
+                            <div class="title"><h4 style="cursor: pointer" onclick="detail('${id}')">${username}</h4></div>
+                            <div class="nickname">
+                                <span>${nickname}</span> |
+                                <span>${modifiedAt}</span>
+                            </div>
+                            </div>
+                        <hr>`;
+            $('#commentBox').append(tempHtml);
+        }
+
+        function detail(id) {
+            window.location.href = `/api/memos/detail?id=${id}`
+        }
+    </script>
+</head>
+
+<body>
+<div class="header">
+    <div class="bgc">
+        <p id="title">
+            Movie Share <br> <br>
+            인생 영화 같이 공유해요~
+        </p>
+    </div>
+</div>
+<br>
+<main>
+    <div class="write">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"
+                data-whatever="@mdo">공유하기
+        </button>
+    </div>
+    <div class="commentAll">
+        <p>전체 글()</p>
+    </div>
+    <hr>
+    <div class="comment-box" id="commentBox">
+        <div class="comment">
+            <div class="title"><h4>안녕하세요!</h4></div>
+            <div class="nickname">
+                <span>감자</span> |
+                <span>2022-03-21</span>
+            </div>
+        </div>
+        <hr>
+        <div class="comment">
+            <div class="title"><h4>안녕하세요!</h4></div>
+            <div class="nickname">
+                <span>감자</span> |
+                <span>2022-03-21</span>
+            </div>
+        </div>
+        <hr>
+    </div>
+
+</main>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">title:</label>
+                        <input type="text" class="form-control" id="recipient-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="nickname" class="col-form-label">nickname:</label>
+                        <input type="text" class="form-control" id="nickname">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">content:</label>
+                        <textarea class="form-control" id="message-text"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" alt onclick="writePost()">Send message</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

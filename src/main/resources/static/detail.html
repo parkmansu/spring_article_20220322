@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Share</title>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+        .header {
+            width: 1920px;
+            height: 302px;
+            background-color: #eee;
+        }
+        .bgc {
+            width: 1920px;
+            height: 302px;
+            border: solid 1px gray;
+
+        }
+
+        #title {
+            width: 1920px;
+            height: 300px;
+            font-size: 40px;
+            margin-top: 110px;
+            margin-left: 600px;
+            color: black;
+            font-weight: bold;
+
+        }
+        #show_comment {
+            width: 850px;
+            height: 300px;
+            margin: auto;
+        }
+        #backbtn {
+            margin-bottom: 10px;
+            font-size: 15px;
+            width: 70px;
+        }
+        #show_top {
+            height: 100px;
+            border: solid 1px #ddd;
+            padding-left: 20px;
+            background-color: #eee;
+        }
+        #show_top span {
+            color: gray;
+            font-size: 12px;
+        }
+        #show_content {
+            height: 200px;
+            border: solid 1px #ddd;
+            padding: 20px;
+            background-color: #ffe;
+        }
+    </style>
+    <script>
+        function getParameter(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            let regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, ""));
+        }
+
+        $(document).ready(function () {
+            getMessages();
+        })
+
+        let id = getParameter("id");
+
+        // 메모를 불러와서 보여주기
+        function getMessages() {
+            // 1. 기존 메모 내용을 지우기
+            // $('#review-list').empty();
+            // 2. 메모 목록을 불러와서 HTML 로 붙이기
+            $.ajax({
+                type: 'GET',
+                url: `/api/memos/detail/${id}`,
+                data: {},
+                success: function (response) {
+                    $('#id').text(response['id']);
+                    $('#show_title').text(response['username']);
+                    $('#show_content').text(response['contents']);
+                    $('#show_nickname').text(response['nickname']);
+                    $('#show_time').text(response['modifiedAt']);
+                }
+            })
+        }
+
+
+    </script>
+</head>
+
+<body>
+<div class="header">
+    <div class="bgc">
+        <p id="title">
+            Movie Review <br>
+        </p>
+    </div>
+</div>
+<br>
+<main>
+
+    <div id="show_comment">
+        <button type="button" class="btn btn-success" id="backbtn" onclick="location.href='/'">List</button>
+        <div id="show_top">
+            <h2 id="show_title">title</h2>
+            <p><span id="show_nickname"> nickname </span> |
+                <span id="show_time"> "시간" </span>
+
+            </p>
+        </div>
+        <div id="show_content">
+            <p id="">content</p>
+        </div>
+    </div>
+
+</main>
+</body>
+
+</html>
