@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -80,16 +80,13 @@
 
         // 메모를 불러와서 보여주기
         function getMessages() {
-            // 1. 기존 메모 내용을 지우기
-            // $('#review-list').empty();
-            // 2. 메모 목록을 불러와서 HTML 로 붙이기
             $.ajax({
                 type: 'GET',
                 url: `/api/memos/detail/${id}`,
                 data: {},
                 success: function (response) {
                     $('#id').text(response['id']);
-                    $('#show_title').text(response['username']);
+                    $('#show_title').text(response['title']);
                     $('#show_content').text(response['contents']);
                     $('#show_nickname').text(response['nickname']);
                     $('#show_time').text(response['modifiedAt']);
@@ -113,7 +110,7 @@
 <main>
 
     <div id="show_comment">
-        <button type="button" class="btn btn-success" id="backbtn" onclick="location.href='/'">List</button>
+        <button type="button" class="btn btn-success" id="backbtn" onclick="history.back(-1)">List</button>
         <div id="show_top">
             <h2 id="show_title">title</h2>
             <p><span id="show_nickname"> nickname </span> |

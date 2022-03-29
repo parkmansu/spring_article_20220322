@@ -1,12 +1,10 @@
 package com.sparta.chapter3_1.controllor;
 
-import com.sparta.chapter3_1.domain.Memo;
-import com.sparta.chapter3_1.domain.MemoRepository;
-import com.sparta.chapter3_1.domain.MemoRequestDto;
+import com.sparta.chapter3_1.model.Memo;
+import com.sparta.chapter3_1.repository.MemoRepository;
+import com.sparta.chapter3_1.dto.MemoRequestDto;
 import com.sparta.chapter3_1.service.MemoService;
 import lombok.RequiredArgsConstructor;
-import org.openjsse.sun.net.util.IPAddressUtil;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,6 +38,7 @@ public class MemoController {
         memoRepository.deleteById(id);
         return id;
     }
+
     @GetMapping("/api/memos/detail/{id}")
     public Memo getDetail (@PathVariable Long id) {
         return memoRepository.findById(id).orElseThrow(
